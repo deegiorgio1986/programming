@@ -1,5 +1,7 @@
 /* Reset some default styles */
-body,
+body {
+  background-color: lightblue;
+},
 h1,
 h2,
 h3,
