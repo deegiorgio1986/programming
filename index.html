@@ -1,75 +1,113 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="nl">
 <head>
-  <title>My Blog</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drankspel Teamverdeler</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 5px;
+    }
+    button {
+      padding: 10px;
+      margin: 10px 0;
+    }
+    .team {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    .team h3 {
+      margin-bottom: 5px;
+    }
+  </style>
 </head>
-
 <body>
-  <header>
-    <h1>Welcome to My Blog</h1>
-    <nav>
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#posts">Posts</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-  </header>
+  <h1>Drankspel Teamverdeler</h1>
 
-  <section id="home">
-    <h2>Latest Posts</h2>
-    <div class="post">
-      <img src="https://assets.website-files.com/634681057b887c6f4830fae2/6367ddc7321d97849941c4f4_6259f609261711c9924d535f_No-Code-p-2600.png" alt="Post 1">
-      <h3>Post Title 1</h3>
-      <p>Post content goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque
-        tempor consequat mauris vitae cursus. Sed tristique massa eget ex ullamcorper tempor.</p>
-      <a href="post1.html">Read More</a>
-    </div>
-    <div class="post">
-      <img src="post2.jpg" alt="Post 2">
-      <h3>Post Title 2</h3>
-      <p>Post content goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque
-        tempor consequat mauris vitae cursus. Sed tristique massa eget ex ullamcorper tempor.</p>
-      <a href="post2.html">Read More</a>
-    </div>
-  </section>
+  <label for="teamCount">Aantal teams:</label>
+  <select id="teamCount">
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+  </select>
 
-  <section id="about">
-    <h2>About Me</h2>
-    <img src="profile.jpg" alt="Profile Picture">
-    <p>Hi, I'm John! I'm a passionate blogger who loves to share my thoughts and ideas with the world. I
-      write about various topics, including technology, travel, and lifestyle. Thanks for visiting my blog!</p>
-  </section>
+  <h2>Voer spelers in (max 12):</h2>
+  <div id="playerInputs"></div>
+  <button onclick="generateTeams()">Verdeel in teams</button>
 
-  <section id="posts">
-    <h2>All Posts</h2>
-    <ul>
-      <li><a href="post1.html">Post Title 1</a></li>
-      <li><a href="post2.html">Post Title 2</a></li>
-      <!-- Add more post links here -->
-    </ul>
-  </section>
+  <div id="teams"></div>
 
-  <section id="contact">
-    <h2>Contact Me</h2>
-    <form>
-      <label for="name">Name</label>
-      <input type="text" id="name" name="name" required>
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" required>
-      <label for="message">Message</label>
-      <textarea id="message" name="message" rows="4" required></textarea>
-      <input type="submit" value="Submit">
-    </form>
-  </section>
+  <script>
+    const maxPlayers = 12;
+    const playerInputsDiv = document.getElementById('playerInputs');
 
-  <footer>
-    <p>&copy; 2023 My Blog. All rights reserved.</p>
-  </footer>
+    // Genereer 12 invoervelden voor spelers
+    for (let i = 1; i <= maxPlayers; i++) {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = `Speler ${i}`;
+      input.id = `player${i}`;
+      playerInputsDiv.appendChild(input);
+    }
 
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function generateTeams() {
+      const teamCount = parseInt(document.getElementById('teamCount').value);
+      const players = [];
+
+      // Verzamel ingevulde namen
+      for (let i = 1; i <= maxPlayers; i++) {
+        const name = document.getElementById(`player${i}`).value.trim();
+        if (name) players.push(name);
+      }
+
+      if (players.length < 2) {
+        alert("Voer minstens 2 spelers in.");
+        return;
+      }
+
+      if (players.length < teamCount) {
+        alert("Niet genoeg spelers voor het aantal gekozen teams.");
+        return;
+      }
+
+      const shuffledPlayers = shuffleArray(players);
+      const teams = Array.from({ length: teamCount }, () => []);
+
+      // Verdeel spelers over de teams
+      shuffledPlayers.forEach((player, index) => {
+        teams[index % teamCount].push(player);
+      });
+
+      // Toon teams
+      const teamsDiv = document.getElementById('teams');
+      teamsDiv.innerHTML = '';
+
+      teams.forEach((team, i) => {
+        const teamDiv = document.createElement('div');
+        teamDiv.className = 'team';
+        teamDiv.innerHTML = `<h3>Team ${i + 1}</h3><ul>${team.map(p => `<li>${p}</li>`).join('')}</ul>`;
+        teamsDiv.appendChild(teamDiv);
+      });
+    }
+  </script>
 </body>
-
 </html>
+
